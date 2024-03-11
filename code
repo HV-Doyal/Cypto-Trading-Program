@@ -1,0 +1,83 @@
+def create_database(database_name):
+    try:
+        connection = mysql.connector.connect(
+            host='localhost',
+            user='root',
+            password='130804',
+        )
+        # Creating a cursor object to execute SQL queries
+        cursor = connection.cursor()
+        # Creating a new database
+        create_database_query = f"CREATE DATABASE {database_name}"
+        cursor.execute(create_database_query)
+        # Commit the changes
+        connection.commit()
+        # Close the connection
+        connection.close()
+        print(f"The database '{database_name}' has been successfully created.")
+    except mysql.connector.Error as error:
+        print(f"Error while creating the database {database_name}: {error}")
+
+
+def delete_database(database_name):
+    try:
+        conn = mysql.connector.connect(
+            host=host,
+            user=user,
+            password=database_password,
+        )
+        # Creating a cursor object to execute SQL queries
+        cursor = conn.cursor()
+        # Dropping the database
+        drop_database_query = f"DROP DATABASE {database_name}"
+        cursor.execute(drop_database_query)
+        # Commit the changes
+        conn.commit()
+        # Close the connection
+        conn.close()
+        print(f"The database '{database_name}' has been successfully deleted.")
+    except mysql.connector.Error as error:
+        print(f"Error while deleting the database: {error}")
+
+
+def create_table(database_name):
+    connection = mysql.connector.connect(
+        host=host,
+        user=user,
+        password=database_password,
+        database=database_name
+    )
+    # Creating a cursor object to execute SQL queries
+    cursor = connection.cursor()
+    # Creating the Customers table
+    create_customers_table = """
+    CREATE TABLE Customers (
+      UserId VARCHAR(10) PRIMARY KEY,
+      Email VARCHAR(50),
+      FirstName VARCHAR(50),
+      LastName VARCHAR(50)
+    );
+    """
+    cursor.execute(create_customers_table)
+    # Creating the Assets table
+    create_assets_table = """
+    CREATE TABLE Assets (
+      AssetId VARCHAR(50) PRIMARY KEY
+    );
+    """
+    cursor.execute(create_assets_table)
+    # Creating the UserAssets table
+    create_user_assets_table = """
+    CREATE TABLE UserAssets (
+      UserId VARCHAR(10),
+      AssetId VARCHAR(50),
+      AssetAmount DECIMAL(18, 8),
+      PRIMARY KEY (UserId, AssetId),
+      FOREIGN KEY (UserId) REFERENCES Customers(UserId),
+      FOREIGN KEY (AssetId) REFERENCES Assets(AssetId)
+    );
+    """
+    cursor.execute(create_user_assets_table)
+    # Committing the changes and closing the connection
+    connection.commit()
+    connection.close()
